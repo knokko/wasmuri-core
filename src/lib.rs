@@ -15,6 +15,7 @@ use serde::ser::{
 };
 
 pub mod util;
+pub mod color;
 
 pub fn get_gl(canvas: &HtmlCanvasElement) -> WebGlRenderingContext {
     let gl = canvas.get_context_with_context_options("webgl", &JsValue::from_serde(&ContextJSON{}).expect("Should be able to serialize context options"));
