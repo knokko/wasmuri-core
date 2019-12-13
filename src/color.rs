@@ -107,6 +107,22 @@ impl TextColors {
             background_color
         }
     }
+
+    pub fn is_fully_solid(&self) -> bool {
+        is_fully_solid(self.fill_color) && is_fully_solid(self.stroke_color) && is_fully_solid(self.background_color)
+    }
+
+    pub fn has_partial_transparency(&self) -> bool {
+        has_partial_transparency(self.fill_color) || has_partial_transparency(self.stroke_color) || has_partial_transparency(self.background_color)
+    }
+}
+
+fn is_fully_solid(color: Color) -> bool {
+    color.alpha == u8::max_value()
+}
+
+fn has_partial_transparency(color: Color) -> bool {
+    color.alpha > 0 && !is_fully_solid(color)
 }
 
 fn u8_to_f32(value: u8) -> f32 {
