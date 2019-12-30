@@ -1,3 +1,5 @@
+#![feature(drain_filter)]
+
 use web_sys::{
     HtmlCanvasElement,
     WebGlRenderingContext
