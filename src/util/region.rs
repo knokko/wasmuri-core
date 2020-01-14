@@ -80,16 +80,16 @@ impl Region {
 
     /// Gets a Vec of Region's that are covered by this Region, but not by any of the Region's in regions (the parameter) 
     /// or by any of the other Region's in the result.
-    pub fn get_uncovered_regions(&self, regions: Vec<Region>) -> Vec<Region> {
+    pub fn get_uncovered_regions(&self, regions: &Vec<Region>) -> Vec<Region> {
         let mut uncovered_regions = vec![*self];
         let mut uncovered_to_add = Vec::new();
         for region in regions {
             
             uncovered_regions.drain_filter(|uncovered| {
-                if uncovered.is_covered_by(region) {
+                if uncovered.is_covered_by(*region) {
                     // The current region is entirely covered by the region, so it must be removed completely
                     true
-                } else if uncovered.intersects_with(region) {
+                } else if uncovered.intersects_with(*region) {
                     // This is the most complex scenario because the regions partially overlap
                     // We will split it into at most 4 regions: above, below, left and right
 
