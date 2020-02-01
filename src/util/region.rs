@@ -268,25 +268,25 @@ mod tests {
             let region = Region::new(10, 0, 40, 50);
 
             // Edge cases
-            assert_eq!(vec![region], region.get_uncovered_regions(Vec::new()));
-            assert_eq!(Vec::<Region>::new(), region.get_uncovered_regions(vec![region]));
+            assert_eq!(vec![region], region.get_uncovered_regions(&Vec::new()));
+            assert_eq!(Vec::<Region>::new(), region.get_uncovered_regions(&vec![region]));
 
             // 1 partially overlapping region
-            assert_eq!(vec![Region::new(20, 0, 40, 50)], region.get_uncovered_regions(vec![Region::new(10, 0, 19, 50)]));
+            assert_eq!(vec![Region::new(20, 0, 40, 50)], region.get_uncovered_regions(&vec![Region::new(10, 0, 19, 50)]));
             // Now the overlapping region is bigger
-            assert_eq!(vec![Region::new(20, 0, 40, 50)], region.get_uncovered_regions(vec![Region::new(-10, -10, 19, 65)]));
+            assert_eq!(vec![Region::new(20, 0, 40, 50)], region.get_uncovered_regions(&vec![Region::new(-10, -10, 19, 65)]));
 
             // Now there is a partially overlapping region on each side
-            assert_eq!(vec![Region::new(20, 10, 30, 40)], region.get_uncovered_regions(vec![
+            assert_eq!(vec![Region::new(20, 10, 30, 40)], region.get_uncovered_regions(&vec![
                 Region::new(-10, -20, 19, 80), Region::new(31, -10, 60, 70), Region::new(-10, 41, 100, 60), Region::new(0, -70, 50, 9)]));
 
             // Now a bar region test
             assert!(set_comparison(vec![Region::new(10, 0, 14, 50), Region::new(21, 0, 24, 50), Region::new(31, 0, 34, 50)], 
-                region.get_uncovered_regions(vec![Region::new(15, 0, 20, 50), Region::new(25, 0, 30, 50), Region::new(35, 0, 40, 50)])));
+                region.get_uncovered_regions(&vec![Region::new(15, 0, 20, 50), Region::new(25, 0, 30, 50), Region::new(35, 0, 40, 50)])));
 
             // Now just a single region in the middle
             assert!(set_comparison(vec![Region::new(10, 0, 19, 50), Region::new(31, 0, 40, 50), Region::new(20, 0, 30, 9), Region::new(20, 41, 30, 50)], 
-                region.get_uncovered_regions(vec![Region::new(20, 10, 30, 40)])));
+                region.get_uncovered_regions(&vec![Region::new(20, 10, 30, 40)])));
         }
     }
 
