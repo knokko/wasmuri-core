@@ -16,8 +16,11 @@ use serde::ser::{
     SerializeMap
 };
 
-pub mod util;
-pub mod color;
+mod util;
+mod color;
+
+pub use util::*;
+pub use color::*;
 
 pub fn get_gl(canvas: &HtmlCanvasElement) -> WebGlRenderingContext {
     let gl = canvas.get_context_with_context_options("webgl", &JsValue::from_serde(&ContextJSON{}).expect("Should be able to serialize context options"));
