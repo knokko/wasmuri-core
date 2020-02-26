@@ -7,4 +7,6 @@ pub fn print(message: &str){
 }
 
 mod region;
+mod weak_vec;
 pub use region::*;
+pub use weak_vec::*;
