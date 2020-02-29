@@ -36,17 +36,19 @@ impl<T: ?Sized> WeakVec<T> {
         });
     }
 
-    pub fn for_each<F: FnMut(&T) -> bool>(&mut self, mut closure: F) {
+    pub fn for_each<F: FnMut(&T)>(&mut self, mut closure: F) {
         self.for_each_cell(|cell| {
             let borrowed = cell.borrow();
-            closure(&borrowed)
+            closure(&borrowed);
+            false
         });
     }
 
-    pub fn for_each_mut<F: FnMut(&mut T) -> bool>(&mut self, mut closure: F) {
+    pub fn for_each_mut<F: FnMut(&mut T)>(&mut self, mut closure: F) {
         self.for_each_cell(|cell| {
             let mut borrowed = cell.borrow_mut();
-            closure(&mut borrowed)
+            closure(&mut borrowed);
+            false
         });
     }
 }
@@ -95,17 +97,19 @@ impl<T: ?Sized, M> WeakMetaVec<T, M> {
         });
     }
 
-    pub fn for_each<F: FnMut(&T, &M) -> bool>(&mut self, mut closure: F) {
+    pub fn for_each<F: FnMut(&T, &M)>(&mut self, mut closure: F) {
         self.for_each_cell(|cell, meta| {
             let borrowed = cell.borrow();
-            closure(&borrowed, meta)
+            closure(&borrowed, meta);
+            false
         });
     }
 
-    pub fn for_each_mut<F: FnMut(&mut T, &mut M) -> bool>(&mut self, mut closure: F) {
+    pub fn for_each_mut<F: FnMut(&mut T, &mut M)>(&mut self, mut closure: F) {
         self.for_each_cell(|cell, meta| {
             let mut borrowed = cell.borrow_mut();
-            closure(&mut borrowed, meta)
+            closure(&mut borrowed, meta);
+            false
         });
     }
 }
@@ -133,16 +137,8 @@ mod tests {
         let mut sum = 0;
         vec.for_each(|number| {
             sum += number;
-            *number == 4
         });
         assert_eq!(15, sum);
-
-        let mut sum = 0;
-        vec.for_each(|number| {
-            sum += number;
-            false
-        });
-        assert_eq!(11, sum);
 
         drop(vanish1);
         drop(vanish2);
@@ -150,9 +146,8 @@ mod tests {
         let mut sum = 0;
         vec.for_each(|number| {
             sum += number;
-            false
         });
-        assert_eq!(1, sum);
+        assert_eq!(5, sum);
     }
 
     #[test]
@@ -174,17 +169,8 @@ mod tests {
         vec.for_each_mut(|text| {
             text.push('e');
             test_string.push_str(text);
-            text == "ce"
         });
         assert_eq!("aebecede".to_string(), test_string);
-
-        let mut test_string = String::new();
-        vec.for_each_mut(|text| {
-            text.push('e');
-            test_string.push_str(text);
-            false
-        });
-        assert_eq!("aeebeedee".to_string(), test_string);
 
         drop(vanish1);
         drop(vanish2);
@@ -193,9 +179,8 @@ mod tests {
         vec.for_each_mut(|text| {
             text.push('e');
             test_string.push_str(text);
-            false
         });
-        assert_eq!("aeee".to_string(), test_string);
+        assert_eq!("aeecee".to_string(), test_string);
     }
 
     #[test]
@@ -217,17 +202,8 @@ mod tests {
         vec.for_each(|number, meta| {
             sum += number;
             assert_eq!(*meta, number + 2);
-            *number == 4
         });
         assert_eq!(15, sum);
-
-        let mut sum = 0;
-        vec.for_each(|number, meta| {
-            sum += number;
-            assert_eq!(*meta, number + 2);
-            false
-        });
-        assert_eq!(11, sum);
 
         drop(vanish1);
         drop(vanish2);
@@ -236,9 +212,8 @@ mod tests {
         vec.for_each(|number, meta| {
             sum += number;
             assert_eq!(*meta, number + 2);
-            false
         });
-        assert_eq!(1, sum);
+        assert_eq!(5, sum);
     }
 
     #[test]
@@ -261,7 +236,6 @@ mod tests {
             text.push('e');
             assert_eq!(*first, text.chars().next().unwrap());
             test_string.push_str(text);
-            text == "ce"
         });
         assert_eq!("aebecede".to_string(), test_string);
 
@@ -270,9 +244,8 @@ mod tests {
             text.push('e');
             assert_eq!(*first, text.chars().next().unwrap());
             test_string.push_str(text);
-            false
         });
-        assert_eq!("aeebeedee".to_string(), test_string);
+        assert_eq!("aeebeeceedee".to_string(), test_string);
 
         drop(vanish1);
         drop(vanish2);
@@ -282,8 +255,7 @@ mod tests {
             text.push('e');
             assert_eq!(*first, text.chars().next().unwrap());
             test_string.push_str(text);
-            false
         });
-        assert_eq!("aeee".to_string(), test_string);
+        assert_eq!("aeeeceee".to_string(), test_string);
     }
 }
